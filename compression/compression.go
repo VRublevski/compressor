@@ -28,7 +28,7 @@ func NewService(c *cache.Cache) *Service {
 	}
 }
 
-// Compress compresses the image with imgName stored in working directory via jpeg algorithm
+// Compress compresses the image with imgName located in working directory via jpeg algorithm
 // using specified quality parameter.
 // If an error occurs during compression, ErrCompression will be returned.
 // If the image is not found, ErrNotFound will be returned.
