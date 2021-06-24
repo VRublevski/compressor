@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/vrubleuskii/image-compression/cache"
-	"github.com/vrubleuskii/image-compression/compression"
+	"github.com/vrubleuskii/image-compression/service/compression"
 	"github.com/vrubleuskii/image-compression/web"
 )
 

@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/vrubleuskii/image-compression/compression"
+	"github.com/vrubleuskii/image-compression/service/compression"
 )
 
 func Register(compressService *compression.Service, r *mux.Router) {
