@@ -74,3 +74,9 @@ func (c *Cache) Put(key Key, val image.Image) {
 	p := pair{key: key, image: val}
 	c.list.PushFront(&p)
 }
+
+func (c *Cache) Size() int {
+	c.mx.Lock()
+	defer c.mx.Unlock()
+	return c.list.Len()
+}
