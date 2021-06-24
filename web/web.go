@@ -11,7 +11,7 @@ import (
 )
 
 func Register(compressService *compression.Service, r *mux.Router) {
-	r.HandleFunc("/compression/{name}", compress(compressService))
+	r.HandleFunc("/compressed/{name}", compress(compressService)).Methods(http.MethodGet)
 }
 
 func compress(service *compression.Service) http.HandlerFunc {
@@ -28,6 +28,11 @@ func compress(service *compression.Service) http.HandlerFunc {
 		compressed, err := service.Compress(name, quality)
 		if err == compression.ErrNotFound {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		w.Header().Set("Contet-Type", "image/json")
