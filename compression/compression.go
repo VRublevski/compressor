@@ -7,12 +7,15 @@ import (
 	"errors"
 	"image"
 	"image/jpeg"
+	_ "image/png"
+	"os"
 
 	"github.com/vrubleuskii/image-compression/cache"
 )
 
 var (
 	ErrCompression = errors.New("unable to compress the image")
+	ErrNotFound    = errors.New("image not found")
 )
 
 type Service struct {
@@ -25,13 +28,26 @@ func NewService(c *cache.Cache) *Service {
 	}
 }
 
-// Compress compresses the img via jpeg algorithm using specified quality.
-// If an error occurs, ErrCompression will be returned.
-func (s *Service) Compress(imgName string, img image.Image, quality int) (image.Image, error) {
+// Compress compresses the image with imgName stored in working directory via jpeg algorithm
+// using specified quality parameter.
+// If an error occurs during compression, ErrCompression will be returned.
+// If the image is not found, ErrNotFound will be returned.
+func (s *Service) Compress(imgName string, quality int) (image.Image, error) {
 	key := cache.Key{Name: imgName, Parameter: quality}
 
 	if compressed := s.cache.Get(key); compressed != nil {
 		return compressed, nil
+	}
+
+	f, err := os.Open(imgName)
+	if err != nil {
+		return nil, ErrNotFound
+	}
+	defer f.Close()
+
+	img, _, err := image.Decode(f)
+	if err != nil {
+		return nil, err
 	}
 
 	compressed, err := compress(img, quality)
