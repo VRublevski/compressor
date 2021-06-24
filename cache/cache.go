@@ -5,6 +5,7 @@ package cache
 import (
 	"container/list"
 	"image"
+	"sync"
 )
 
 type Key struct {
@@ -15,6 +16,7 @@ type Key struct {
 type Cache struct {
 	list *list.List
 	size int
+	mx   sync.Mutex
 }
 
 type pair struct {
@@ -33,6 +35,8 @@ func New(size int) *Cache {
 // Get returns the Image associated with the key, or nil if the key is not
 // present.
 func (c *Cache) Get(key Key) image.Image {
+	c.mx.Lock()
+	defer c.mx.Unlock()
 	var e *list.Element
 	for e = c.list.Front(); e != nil; e = e.Next() {
 		p := e.Value.(*pair)
@@ -52,6 +56,8 @@ func (c *Cache) Get(key Key) image.Image {
 
 // Put stores val under key in the cache replacing old entry if necessary.
 func (c *Cache) Put(key Key, val image.Image) {
+	c.mx.Lock()
+	defer c.mx.Unlock()
 	// check for presence of an element with the same key
 	for e := c.list.Front(); e != nil; e = e.Next() {
 		p := e.Value.(*pair)
