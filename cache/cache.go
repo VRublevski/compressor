@@ -14,15 +14,18 @@ type Key struct {
 
 type Cache struct {
 	list *list.List
-	m    map[Key]image.Image
 	size int
+}
+
+type pair struct {
+	key   Key
+	image image.Image
 }
 
 // New creates a new Cache with capacity equal to size.
 func New(size int) *Cache {
 	return &Cache{
 		list: list.New(),
-		m:    make(map[Key]image.Image),
 		size: size,
 	}
 }
