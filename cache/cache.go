@@ -38,5 +38,10 @@ func (c *Cache) Get(key Key) image.Image {
 
 // Put stores val under key in the cache replacing old entry if necessary.
 func (c *Cache) Put(key Key, val image.Image) {
+	if c.list.Len() == c.size {
+		c.list.Remove(c.list.Back())
+	}
 
+	p := pair{key: key, image: val}
+	c.list.PushFront(&p)
 }

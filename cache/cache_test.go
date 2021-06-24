@@ -33,9 +33,9 @@ func TestPut(t *testing.T) {
 		for i := 0; i < size; i++ {
 			cache.Put(Key{Name: imgName, Parameter: i}, &img)
 		}
-		got := cache.list.Back()
+		got := cache.list.Back().Value.(*pair)
 
-		if got.Value != want {
+		if *got != want {
 			t.Errorf("expected last element to be %v actual %v", want, got)
 		}
 	})
