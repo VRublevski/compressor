@@ -40,3 +40,44 @@ func TestPut(t *testing.T) {
 		}
 	})
 }
+
+func TestGet(t *testing.T) {
+	const (
+		size    = 32
+		imgName = "bar.png"
+	)
+
+	t.Run("test cache eviction", func(t *testing.T) {
+		img := image.NRGBA{}
+		cache := New(size)
+
+		key := Key{Name: imgName, Parameter: 0}
+
+		cache.Put(key, &img)
+		for i := 0; i < size; i++ {
+			cache.Put(Key{Name: imgName, Parameter: i + 1}, &img)
+		}
+
+		got := cache.Get(key)
+		if got != nil {
+			t.Error("expected cache miss")
+		}
+	})
+
+	t.Run("test cache hit", func(t *testing.T) {
+		img := image.NRGBA{}
+		cache := New(size)
+
+		fst := pair{key: Key{Name: imgName, Parameter: 0}, image: &img}
+
+		cache.Put(fst.key, fst.image)
+		for i := 0; i < size-1; i++ {
+			cache.Put(Key{Name: imgName, Parameter: i}, &img)
+		}
+
+		got := cache.Get(fst.key)
+		if got != &img {
+			t.Error("expected cache hit")
+		}
+	})
+}
