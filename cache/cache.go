@@ -52,6 +52,15 @@ func (c *Cache) Get(key Key) image.Image {
 
 // Put stores val under key in the cache replacing old entry if necessary.
 func (c *Cache) Put(key Key, val image.Image) {
+	// check for presence of an element with the same key
+	for e := c.list.Front(); e != nil; e = e.Next() {
+		p := e.Value.(*pair)
+		if p.key == key {
+			c.list.Remove(e)
+			break
+		}
+	}
+
 	if c.list.Len() == c.size {
 		c.list.Remove(c.list.Back())
 	}
