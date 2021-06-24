@@ -2,16 +2,19 @@
 package web
 
 import (
+	"fmt"
 	"image/jpeg"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/vrubleuskii/image-compression/service/compression"
+	"github.com/vrubleuskii/image-compression/service/metrics"
 )
 
-func Register(compressService *compression.Service, r *mux.Router) {
+func Register(compressService *compression.Service, metricsService *metrics.Service, r *mux.Router) {
 	r.HandleFunc("/compressed/{name}", compress(compressService)).Methods(http.MethodGet)
+	r.HandleFunc("/metrics/cache/size", cacheSize(metricsService)).Methods(http.MethodGet)
 }
 
 func compress(service *compression.Service) http.HandlerFunc {
@@ -47,4 +50,11 @@ func parseQuality(param string) (int, error) {
 	}
 
 	return strconv.Atoi(param)
+}
+
+func cacheSize(service *metrics.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+		fmt.Fprintf(w, "cache size:%d", service.CacheSize())
+	}
 }

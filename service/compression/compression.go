@@ -1,5 +1,5 @@
-// Package compression provides service that provides operations for
-// image compression.
+// Package compression provides service that processes
+// image compression requests.
 package compression
 
 import (
