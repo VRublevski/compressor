@@ -33,7 +33,21 @@ func New(size int) *Cache {
 // Get returns the Image associated with the key, or nil if the key is not
 // present.
 func (c *Cache) Get(key Key) image.Image {
-	return nil
+	var e *list.Element
+	for e = c.list.Front(); e != nil; e = e.Next() {
+		p := e.Value.(*pair)
+		if p.key == key {
+			break
+		}
+	}
+
+	if e == nil {
+		return nil
+	}
+
+	img := e.Value.(*pair).image
+	c.list.MoveToFront(e)
+	return img
 }
 
 // Put stores val under key in the cache replacing old entry if necessary.
